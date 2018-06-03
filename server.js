@@ -1,8 +1,9 @@
 const express = require("express");
 const mongoose = require("mongoose");
+const bodyParser = require("body-parser");
 const app = express();
 
-// load routes]
+// load routes
 const users = require("./routes/api/users");
 const profile = require("./routes/api/profile");
 const posts = require("./routes/api/posts");
@@ -17,6 +18,17 @@ mongoose.connect(db)
     console.log("mongodb/mlab connected")
   })
   .catch(err => console.log("Error connecting mongodb/mlab:", err));
+
+//**********************************************
+// 	 MIDDLEWARES start
+//**********************************************
+
+app.use(bodyParser.urlencoded({extended: false}));
+app.use(bodyParser.json());
+
+//**********************************************
+// 	 MIDDLEWARES end
+//**********************************************
 
 // home/index route
 app.get("/", (req, res) => {

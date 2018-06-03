@@ -3,6 +3,11 @@ const router = express.Router();
 const gravatar = require("gravatar");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const passport = require("passport");
+
+// load input validation
+const validateRegisterInput = require("../../validation/register");
+const validateLoginInput = require("../../validation/login");
 
 const keys = require("../../config/keys");
 
@@ -21,6 +26,14 @@ router.get("/test", (req, res) => {
 // @desc    Register user
 // @access  Public 
 router.post("/register", (req, res) => {
+  const {errors, isValid} = validateRegisterInput(req.body);
+
+  // check validation
+  if(!isValid) {
+    return res.status(400).json(errors);
+  }
+
+
   User.findOne({ email: req.body.email })
     .then(user => {
       if (user) {
@@ -43,7 +56,7 @@ router.post("/register", (req, res) => {
             newUser.password = hash;
             User.create(newUser)
               .then(user => res.json(user))
-              .catch(err, console.log("Error on creating new user: POST /api/users/register", err));
+              .catch(err => console.log("Error on creating new user: POST /api/users/register", err));
           })
         });
       }
@@ -55,6 +68,14 @@ router.post("/register", (req, res) => {
 // @desc    Login user / Returning JWT token
 // @access  Public 
 router.post("/login", (req, res) => {
+  
+  const {errors, isValid} = validateLoginInput(req.body);
+
+  // check validation
+  if(!isValid) {
+    return res.status(400).json(errors);
+  }
+
   const email = req.body.email;
   const password = req.body.password;
 
@@ -87,4 +108,19 @@ router.post("/login", (req, res) => {
     })
     .catch(err => console.log("Error finding user: /api/users/login", err));
 });
+
+// @route   POST /api/users/current
+// @desc    Return current user
+// @access  Private 
+router.get("/current", passport.authenticate("jwt", {session: false}), (req, res) => {
+  res.json({
+    id: req.user._id,
+    name: req.user.name,
+    email: req.user.email,
+    avatar: req.user.avatar
+  });
+});
+
+
+
 module.exports = router;

@@ -3,11 +3,11 @@ const router = express.Router();
 const passport = require("passport");
 
 // load model
-const Post = require("../../models/Post")
-const Profile = require("../../models/Profile")
-
+const Post = require("../../models/Post");
+const Profile = require("../../models/Profile");
 // load validation
 const validatePostInput = require("../../validation/post");
+
 
 // @route   GET /api/posts/test
 // @desc    Tests posts route

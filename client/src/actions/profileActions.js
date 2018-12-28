@@ -1,5 +1,12 @@
 import axios from 'axios'
-import { GET_PROFILE, PROFILE_LOADING, GET_ERRORS, CLEAR_CURRENT_PROFILE, SET_CURRENT_USER } from './types'
+import {
+	GET_PROFILE,
+	PROFILE_LOADING,
+	GET_ERRORS,
+	CLEAR_CURRENT_PROFILE,
+	SET_CURRENT_USER,
+	GET_PROFILES
+} from './types'
 
 /* Profile Loading */
 export const setProfileLoading = () => {
@@ -111,6 +118,25 @@ export const deleteEducation = id => dispatch => {
 				})
 			)
 	}
+}
+
+/* Get all profiles */
+export const getProfiles = () => dispatch => {
+	dispatch(setProfileLoading())
+	axios
+		.delete(`/api/profile/all`)
+		.then(result =>
+			dispatch({
+				type: GET_PROFILES,
+				payload: result.data
+			})
+		)
+		.catch(err =>
+			dispatch({
+				type: GET_PROFILES,
+				paylpoad: null
+			})
+		)
 }
 
 /* Delete account and profile */

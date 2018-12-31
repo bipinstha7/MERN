@@ -73,6 +73,26 @@ export const addEducation = (eduData, history) => dispatch => {
 		})
 }
 
+/* Delete Experience */
+export const deleteExperience = id => dispatch => {
+	if (window.confirm('Are you sure? This can NOT be undone !!')) {
+		axios
+			.delete(`/api/profile/experience/${id}`)
+			.then(result =>
+				dispatch({
+					type: GET_PROFILE,
+					payload: result.data
+				})
+			)
+			.catch(err =>
+				dispatch({
+					type: GET_ERRORS,
+					paylpoad: err.response.data
+				})
+			)
+	}
+}
+
 /* Delete account and profile */
 export const deleteAccount = () => dispatch => {
 	if (window.confirm('Are you sure? This can NOT be undone !')) {

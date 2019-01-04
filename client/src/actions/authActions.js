@@ -50,3 +50,15 @@ export const loginUser = userData => dispatch => {
 			})
 		)
 }
+
+/* Log user out */
+export const logoutUser = () => dispatch => {
+	/* remove token from localStorage */
+	localStorage.removeItem('jwtToken')
+
+	/* remove auth header for future requests */
+	setAuthToken(false)
+
+	/* set current user {} which will also set isAuthenticated to false */
+	dispatch(setCurrentUser({}))
+}

@@ -47,8 +47,6 @@ router.post('/register', (req, res) => {
 						password: hash
 					}
 
-					console.log('newUser', newUser)
-
 					User.create(newUser)
 						.then(user => res.status(200).json(user))
 						.catch(err => res.status(500).json({ err }))

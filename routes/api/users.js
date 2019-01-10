@@ -17,23 +17,23 @@ const validateLoginInput = require('../../validation/login')
  * @access  Public
  */
 router.post('/register', (req, res) => {
-	const {errors, isValid} = validateRegisterInput(req.body)
+	const { errors, isValid } = validateRegisterInput(req.body)
 
 	if (!isValid) {
-		return res.status(400).json({err: errors})
+		return res.status(400).json(errors)
 	}
 
 	User.findOne({ email: req.body.email })
 		.then(user => {
 			if (user) {
-				errors.Email = 'Email already exists' 
+				errors.Email = 'Email already exists'
 				return res.status(400).json(errors)
 			}
 
 			const avatar = gravatar.url(req.body.email, {
 				s: '200', // size
 				r: 'pg', // rating
-				d: 'mm', // default
+				d: 'mm' // default
 			})
 
 			bcrypt.genSalt(10, (err, salt) => {
@@ -44,7 +44,7 @@ router.post('/register', (req, res) => {
 						name: req.body.name,
 						email: req.body.email,
 						avatar: avatar,
-						password: hash,
+						password: hash
 					}
 
 					console.log('newUser', newUser)
@@ -55,7 +55,7 @@ router.post('/register', (req, res) => {
 				})
 			})
 		})
-		.catch(err => res.status(500).json({ err: err.message }))
+		.catch(err => res.status(500).json(err.message))
 })
 
 /**
@@ -65,19 +65,17 @@ router.post('/register', (req, res) => {
  */
 router.post('/login', (req, res) => {
 	const { email, password } = req.body
-	const {errors, isValid} = validateLoginInput(req.body)
+	const { errors, isValid } = validateLoginInput(req.body)
 
 	if (!isValid) {
-		return res.status(400).json({err: errors})
+		return res.status(400).json({ err: errors })
 	}
 
 	User.findOne({ email })
 		.then(user => {
 			if (!user) {
 				errors.email = 'Email / Password incorrect'
-				return res
-					.status(400)
-					.json(errors)
+				return res.status(400).json(errors)
 			}
 
 			bcrypt.compare(password, user.password).then(isMatch => {
@@ -85,20 +83,15 @@ router.post('/login', (req, res) => {
 					const payload = {
 						id: user.id,
 						name: user.name,
-						avatar: user.avatar,
+						avatar: user.avatar
 					}
 
-					jwt.sign(
-						payload,
-						keys.secretOrKey,
-						{ expiresIn: 3600 },
-						(err, token) => {
-							res.status(200).json({
-								success: true,
-								token: `Bearer ${token}`,
-							})
-						}
-					)
+					jwt.sign(payload, keys.secretOrKey, { expiresIn: 3600 }, (err, token) => {
+						res.status(200).json({
+							success: true,
+							token: `Bearer ${token}`
+						})
+					})
 				} else {
 					errors.password = 'Email / Password incorrect'
 					res.status(400).json(errors)

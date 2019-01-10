@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import axios from 'axios'
 
 class Register extends Component {
 	state = {
@@ -16,7 +17,10 @@ class Register extends Component {
 	onSubmit = event => {
 		event.preventDefault()
 
-		console.log('states', this.state)
+		axios
+			.post('/api/users/register', this.state)
+			.then(result => console.log('registered data', result.data))
+			.catch(err => console.log(err.response.data || err.message))
 	}
 
 	render() {

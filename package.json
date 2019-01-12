@@ -7,7 +7,7 @@
     "client-install": "npm install --prefix client",
     "start": "node server.js",
     "server": "nodemon server.js",
-    "client": "npm start --perfix client"
+    "client": "npm start --prefix client"
   },
   "repository": {
     "type": "git",

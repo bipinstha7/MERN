@@ -191,12 +191,16 @@ router.delete('/comment/:id/:comment_id', passport.authenticate('jwt', { session
 	Post.findById(req.params.id)
 		.then(post => {
 			/* check whether the user has commented */
-			const isCommented = post.comments.filter(comment => comment._id.toString() === req.params.comment_id)
+			const isCommented = post.comments.filter(
+				comment => comment._id.toString() === req.params.comment_id
+			)
 			if (!isCommented.length)
 				return res.status(400).json({ alreadyLiked: 'User has not commented in this post yet' })
 
 			/* Remove user id from array */
-			const removeIndex = post.comments.map(comment => comment._id.toString()).indexOf(req.params.comment_id)
+			const removeIndex = post.comments
+				.map(comment => comment._id.toString())
+				.indexOf(req.params.comment_id)
 
 			if (removeIndex === -1) {
 				const error = 'User has not commented in this post yet'

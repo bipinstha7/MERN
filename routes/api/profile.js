@@ -7,7 +7,7 @@ const router = express.Router()
  * @access  Public
  */
 router.get('/test', (req, res) => {
-    res.json({message: 'profile message'})
+	res.json({ message: 'profile message' })
 })
 
 module.exports = router

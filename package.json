@@ -1,0 +1,29 @@
+{
+  "name": "mern",
+  "version": "1.0.0",
+  "description": "A social network to get connected.",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "server": "nodemon server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bipinstha7/MERN.git"
+  },
+  "author": "Bipin Shrestha",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/bipinstha7/MERN/issues"
+  },
+  "homepage": "https://github.com/bipinstha7/MERN#readme",
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "express": "^4.16.4",
+    "jsonwebtoken": "^8.4.0",
+    "mongoose": "^5.4.5",
+    "passport": "^0.4.0",
+    "passport-jwt": "^4.0.0",
+    "validator": "^10.11.0"
+  }
+}

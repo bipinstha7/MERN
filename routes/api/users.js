@@ -9,6 +9,7 @@ const router = express.Router()
 const User = require('../../models/User')
 const keys = require('../../config/keys')
 const validateRegisterInput = require('../../validation/register')
+const validateLoginInput = require('../../validation/login')
 
 /**
  * @route   GET api/users/register
@@ -64,13 +65,19 @@ router.post('/register', (req, res) => {
  */
 router.post('/login', (req, res) => {
 	const { email, password } = req.body
+	const {errors, isValid} = validateLoginInput(req.body)
+
+	if (!isValid) {
+		return res.status(400).json({err: errors})
+	}
 
 	User.findOne({ email })
 		.then(user => {
 			if (!user) {
+				errors.email = 'Email / Password incorrect'
 				return res
 					.status(400)
-					.json({ msg: 'Email / Password incorrect' })
+					.json(errors)
 			}
 
 			bcrypt.compare(password, user.password).then(isMatch => {
@@ -93,7 +100,8 @@ router.post('/login', (req, res) => {
 						}
 					)
 				} else {
-					res.status(400).json({ msg: 'Email / Password incorrect' })
+					errors.password = 'Email / Password incorrect'
+					res.status(400).json(errors)
 				}
 			})
 		})

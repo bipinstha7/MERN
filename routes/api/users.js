@@ -2,11 +2,13 @@ const express = require('express')
 const gravatar = require('gravatar')
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
+const passport = require('passport')
 
 const router = express.Router()
 
 const User = require('../../models/User')
 const keys = require('../../config/keys')
+const validateRegisterInput = require('../../validation/register')
 
 /**
  * @route   GET api/users/register
@@ -14,10 +16,17 @@ const keys = require('../../config/keys')
  * @access  Public
  */
 router.post('/register', (req, res) => {
+	const {errors, isValid} = validateRegisterInput(req.body)
+
+	if (!isValid) {
+		return res.status(400).json({err: errors})
+	}
+
 	User.findOne({ email: req.body.email })
 		.then(user => {
 			if (user) {
-				return res.status(400).json({ email: 'Email already exists' })
+				errors.Email = 'Email already exists' 
+				return res.status(400).json(errors)
 			}
 
 			const avatar = gravatar.url(req.body.email, {

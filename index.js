@@ -3,6 +3,9 @@ const mongoose = require('mongoose')
 
 const app = express()
 
+/* Middlewares */
+app.use(express.json())
+
 /* DB Congif */
 const db = require('./config/keys').mongoURI
 

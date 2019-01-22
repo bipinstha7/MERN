@@ -1,9 +1,12 @@
 const express = require('express')
 const gravatar = require('gravatar')
 const bcrypt = require('bcryptjs')
+const jwt = require('jsonwebtoken')
+
 const router = express.Router()
 
 const User = require('../../models/User')
+const keys = require('../../config/keys')
 
 /**
  * @route   GET api/users/register
@@ -45,6 +48,47 @@ router.post('/register', (req, res) => {
 		.catch(err => res.status(500).json({ err: err.message }))
 })
 
+/**
+ * @route   GET api/users/login
+ * @desc    Login user / Returning JWT Token
+ * @access  Public
+ */
+router.post('/login', (req, res) => {
+	const { email, password } = req.body
 
+	User.findOne({ email })
+		.then(user => {
+			if (!user) {
+				return res
+					.status(400)
+					.json({ msg: 'Email / Password incorrect' })
+			}
+
+			bcrypt.compare(password, user.password).then(isMatch => {
+				if (isMatch) {
+					const payload = {
+						id: user.id,
+						name: user.name,
+						avatar: user.avatar,
+					}
+
+					jwt.sign(
+						payload,
+						keys.secretOrKey,
+						{ expiresIn: 3600 },
+						(err, token) => {
+							res.status(200).json({
+								success: true,
+								token: `Bearer ${token}`,
+							})
+						}
+					)
+				} else {
+					res.status(400).json({ msg: 'Email / Password incorrect' })
+				}
+			})
+		})
+		.catch(err => res.status(500).json({ err }))
+})
 
 module.exports = router

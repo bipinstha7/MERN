@@ -19,6 +19,7 @@
   "homepage": "https://github.com/bipinstha7/MERN#readme",
   "dependencies": {
     "bcryptjs": "^2.4.3",
+    "eslint": "^5.12.1",
     "express": "^4.16.4",
     "gravatar": "^1.8.0",
     "jsonwebtoken": "^8.4.0",

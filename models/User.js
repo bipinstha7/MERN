@@ -7,16 +7,16 @@ const UserSchema = new Schema({
         required: true
     },
     email: {
-        tupe: String,
-        required: true
+        type: String,
+        required: true,
+        unique: true
     },
     password: {
-        tupe: String,
+        type: String,
         required: true
     },
     avatar: {
-        tupe: String,
-        required: true
+        type: String
     },
     date: {
         type: Date,

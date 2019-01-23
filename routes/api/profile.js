@@ -65,7 +65,10 @@ router.get('/user/:user_id', (req, res) => {
 			res.status(200).json(profile)
 		})
 		.catch(err => {
-			
+			if (err.kind && err.kind === 'ObjectId') {
+				errors.noprofile = 'There is no profile for this user'
+				res.status(404).json(errors)
+			}
 
 			res.status(500).json(err)
 		})

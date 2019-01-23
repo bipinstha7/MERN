@@ -283,6 +283,41 @@ router.delete('/experience/:exp_id', passport.authenticate('jwt', { session: fal
 		.catch(err => res.status(500).json(err))
 })
 
+/**
+ * @route   DELETE api/profile/education/:edu_id
+ * @desc    Delete education from profile
+ * @access  Private
+ */
+router.delete('/education/:edu_id', passport.authenticate('jwt', { session: false }), (req, res) => {
+	const errors = {}
+	Profile.findOne({ user: req.user.id })
+		.then(profile => {
+			if (!profile) {
+				errors.noprofile = 'There is no profile for this user'
+				return res.status(404).json(errors)
+			}
+
+			// Get remove index
+			const removeIndex = profile.education
+				.map(education => education._id.toString())
+				.indexOf(req.params.edu_id)
+
+			if (removeIndex === -1) {
+				errors.expError = 'Data has already been deleted or can not be deleted'
+				return res.status(500).json(errors)
+			}
+
+			// Splice out of array
+			profile.education.splice(removeIndex, 1)
+
+			profile
+				.save()
+				.then(profile => res.status(200).json(profile))
+				.catch(err => res.status(500).json(err))
+		})
+		.catch(err => res.status(500).json(err))
+})
+
 
 
 module.exports = router

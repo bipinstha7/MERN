@@ -6,6 +6,8 @@ const passport = require('passport')
 const User = require('../../models/User')
 const Profile = require('../../models/Profile')
 const validateProfileInput = require('../../validation/profile')
+const validateExperienceInput = require('../../validation/experience')
+const validateEducationInput = require('../../validation/education')
 
 /**
  * @route   GET api/profile
@@ -166,7 +168,12 @@ router.post('/', passport.authenticate('jwt', { session: false }), (req, res) =>
  * @access  Private
  */
 router.post('/experience', passport.authenticate('jwt', { session: false }), (req, res) => {
-	const errors = {}
+	const { errors, isValid } = validateExperienceInput(req.body)
+
+	// check validation
+	if (!isValid) {
+		return res.status(400).json(errors)
+	}
 
 	Profile.findOne({ user: req.user.id }).then(profile => {
 		if (!profile) {
@@ -187,6 +194,45 @@ router.post('/experience', passport.authenticate('jwt', { session: false }), (re
 
 		// Add to experience array - in the begining of an array
 		profile.experience.unshift(newExperience)
+
+		profile.save()
+			.then(profile => res.status(200).json(profile))
+			.catch(err => res.status(500).json(err))
+	})
+})
+
+/**
+ * @route   GET api/profile/education
+ * @desc    Add educaton to profile
+ * @access  Private
+ */
+router.post('/education', passport.authenticate('jwt', { session: false }), (req, res) => {
+	const { errors, isValid } = validateEducationInput(req.body)
+
+	// check validation
+	if (!isValid) {
+		return res.status(400).json(errors)
+	}
+
+	Profile.findOne({ user: req.user.id }).then(profile => {
+		if (!profile) {
+			errors.noprofile = 'There is no profile for this user'
+			return res.status(404).json(errors)
+		}
+
+		const { school, degree, fieldofstudy, from, to, current, description } = req.body
+		const newEducation = {
+			school,
+			degree,
+			fieldofstudy,
+			from,
+			to,
+			current,
+			description
+		}
+
+		// Add to experience array - in the begining of an array
+		profile.education.unshift(newEducation)
 
 		profile.save()
 			.then(profile => res.status(200).json(profile))

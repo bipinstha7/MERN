@@ -16,7 +16,7 @@ router.get('/', passport.authenticate('jwt', { session: false }), (req, res) => 
 	const errors = {}
 
 	Profile.findOne({ user: req.user.id })
-	.populate('user', ['name', 'avatar'])
+		.populate('user', ['name', 'avatar'])
 		.then(profile => {
 			errors.noprofile = 'There is no profie for this user'
 			if (!profile) return res.status(404).json(errors)
@@ -56,7 +56,7 @@ router.get('/all', (req, res) => {
 router.get('/handle/:handle', (req, res) => {
 	const errors = {}
 
-	Profile.findOne({handle: req.params.handle})
+	Profile.findOne({ handle: req.params.handle })
 		.populate('user', ['name', 'avatar'])
 		.then(profile => {
 			if (!profile) {
@@ -77,7 +77,7 @@ router.get('/handle/:handle', (req, res) => {
 router.get('/user/:user_id', (req, res) => {
 	const errors = {}
 
-	Profile.findOne({user: req.params.user_id})
+	Profile.findOne({ user: req.params.user_id })
 		.populate('user', ['name', 'avatar'])
 		.then(profile => {
 			if (!profile) {
@@ -103,7 +103,7 @@ router.get('/user/:user_id', (req, res) => {
  * @access  Private
  */
 router.post('/', passport.authenticate('jwt', { session: false }), (req, res) => {
-	const {errors, isValid} = validateProfileInput(req.body)
+	const { errors, isValid } = validateProfileInput(req.body)
 
 	// check validation
 	if (!isValid) {
@@ -157,6 +157,40 @@ router.post('/', passport.authenticate('jwt', { session: false }), (req, res) =>
 				})
 				.catch(err => res.status(500).json(err))
 		}
+	})
+})
+
+/**
+ * @route   GET api/profile/experience
+ * @desc    Add experience to profile
+ * @access  Private
+ */
+router.post('/experience', passport.authenticate('jwt', { session: false }), (req, res) => {
+	const errors = {}
+
+	Profile.findOne({ user: req.user.id }).then(profile => {
+		if (!profile) {
+			errors.noprofile = 'There is no profile for this user'
+			return res.status(404).json(errors)
+		}
+
+		const { title, company, location, from, to, current, description } = req.body
+		const newExperience = {
+			title,
+			company,
+			location,
+			from,
+			to,
+			current,
+			description
+		}
+
+		// Add to experience array - in the begining of an array
+		profile.experience.unshift(newExperience)
+
+		profile.save()
+			.then(profile => res.status(200).json(profile))
+			.catch(err => res.status(500).json(err))
 	})
 })
 

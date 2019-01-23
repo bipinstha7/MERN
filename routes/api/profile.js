@@ -136,30 +136,32 @@ router.post('/', passport.authenticate('jwt', { session: false }), (req, res) =>
 	if (req.body.linkedin) profileFields.social.linkedin = req.body.linkedin
 	if (req.body.instagram) profileFields.social.instagram = req.body.instagram
 
-	Profile.findOne({ user: req.user.id }).then(profile => {
-		if (profile) {
-			// Update
-			Profile.findOneAndUpdate({ user: req.user.id }, profileFields, { new: true })
-				.then(profile => res.status(200).json(profile))
-				.catch(err => res.status(500).json(err))
-		} else {
-			// Create
+	Profile.findOne({ user: req.user.id })
+		.then(profile => {
+			if (profile) {
+				// Update
+				Profile.findOneAndUpdate({ user: req.user.id }, profileFields, { new: true })
+					.then(profile => res.status(200).json(profile))
+					.catch(err => res.status(500).json(err))
+			} else {
+				// Create
 
-			// Checkif handle exists
-			Profile.findOne({ handle: profileFields.handle })
-				.then(profile => {
-					if (profile) {
-						errors.handle = 'That handle already exists'
-						return res.status(400).json(errors)
-					}
+				// Checkif handle exists
+				Profile.findOne({ handle: profileFields.handle })
+					.then(profile => {
+						if (profile) {
+							errors.handle = 'That handle already exists'
+							return res.status(400).json(errors)
+						}
 
-					Profile.create(profileFields)
-						.then(profile => res.status(200).json(profile))
-						.catch(err => res.status(500).json)
-				})
-				.catch(err => res.status(500).json(err))
-		}
-	})
+						Profile.create(profileFields)
+							.then(profile => res.status(200).json(profile))
+							.catch(err => res.status(500).json)
+					})
+					.catch(err => res.status(500).json(err))
+			}
+		})
+		.catch(err => res.status(500).json(err))
 })
 
 /**
@@ -175,30 +177,33 @@ router.post('/experience', passport.authenticate('jwt', { session: false }), (re
 		return res.status(400).json(errors)
 	}
 
-	Profile.findOne({ user: req.user.id }).then(profile => {
-		if (!profile) {
-			errors.noprofile = 'There is no profile for this user'
-			return res.status(404).json(errors)
-		}
+	Profile.findOne({ user: req.user.id })
+		.then(profile => {
+			if (!profile) {
+				errors.noprofile = 'There is no profile for this user'
+				return res.status(404).json(errors)
+			}
 
-		const { title, company, location, from, to, current, description } = req.body
-		const newExperience = {
-			title,
-			company,
-			location,
-			from,
-			to,
-			current,
-			description
-		}
+			const { title, company, location, from, to, current, description } = req.body
+			const newExperience = {
+				title,
+				company,
+				location,
+				from,
+				to,
+				current,
+				description
+			}
 
-		// Add to experience array - in the begining of an array
-		profile.experience.unshift(newExperience)
+			// Add to experience array - in the begining of an array
+			profile.experience.unshift(newExperience)
 
-		profile.save()
-			.then(profile => res.status(200).json(profile))
-			.catch(err => res.status(500).json(err))
-	})
+			profile
+				.save()
+				.then(profile => res.status(200).json(profile))
+				.catch(err => res.status(500).json(err))
+		})
+		.catch(err => res.status(500).json(err))
 })
 
 /**
@@ -214,30 +219,70 @@ router.post('/education', passport.authenticate('jwt', { session: false }), (req
 		return res.status(400).json(errors)
 	}
 
-	Profile.findOne({ user: req.user.id }).then(profile => {
-		if (!profile) {
-			errors.noprofile = 'There is no profile for this user'
-			return res.status(404).json(errors)
-		}
+	Profile.findOne({ user: req.user.id })
+		.then(profile => {
+			if (!profile) {
+				errors.noprofile = 'There is no profile for this user'
+				return res.status(404).json(errors)
+			}
 
-		const { school, degree, fieldofstudy, from, to, current, description } = req.body
-		const newEducation = {
-			school,
-			degree,
-			fieldofstudy,
-			from,
-			to,
-			current,
-			description
-		}
+			const { school, degree, fieldofstudy, from, to, current, description } = req.body
+			const newEducation = {
+				school,
+				degree,
+				fieldofstudy,
+				from,
+				to,
+				current,
+				description
+			}
 
-		// Add to experience array - in the begining of an array
-		profile.education.unshift(newEducation)
+			// Add to experience array - in the begining of an array
+			profile.education.unshift(newEducation)
 
-		profile.save()
-			.then(profile => res.status(200).json(profile))
-			.catch(err => res.status(500).json(err))
-	})
+			profile
+				.save()
+				.then(profile => res.status(200).json(profile))
+				.catch(err => res.status(500).json(err))
+		})
+		.catch(err => res.status(500).json(err))
 })
+
+/**
+ * @route   DELETE api/profile/experience/:exp_id
+ * @desc    Delete experience from profile
+ * @access  Private
+ */
+router.delete('/experience/:exp_id', passport.authenticate('jwt', { session: false }), (req, res) => {
+	const errors = {}
+	Profile.findOne({ user: req.user.id })
+		.then(profile => {
+			if (!profile) {
+				errors.noprofile = 'There is no profile for this user'
+				return res.status(404).json(errors)
+			}
+
+			// Get remove index
+			const removeIndex = profile.experience
+				.map(experience => experience._id.toString())
+				.indexOf(req.params.exp_id)
+
+			if (removeIndex === -1) {
+				errors.expError = 'Data has already been deleted or can not be deleted'
+				return res.status(500).json(errors)
+			}
+
+			// Splice out of array
+			profile.experience.splice(removeIndex, 1)
+
+			profile
+				.save()
+				.then(profile => res.status(200).json(profile))
+				.catch(err => res.status(500).json(err))
+		})
+		.catch(err => res.status(500).json(err))
+})
+
+
 
 module.exports = router

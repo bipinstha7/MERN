@@ -84,6 +84,33 @@ router.delete('/:id', passport.authenticate('jwt', { session: false }), (req, re
 		})
 })
 
+/**
+ * @route   POST api/posts/like/:id
+ * @desc    Like post
+ * @access  Pivate
+ */
 
+router.post('/like/:id', passport.authenticate('jwt', { session: false }), (req, res) => {
+	Post.findById(req.params.id)
+		.then(post => {
+			/* check whether the post has already been liked */
+			const isLiked = post.likes.filter(like => like.user.toString() === req.user.id)
+			if (isLiked.length) return res.status(400).json({ alreadyLiked: 'User already liked this post' })
+
+			/* Add user id to likes array to the beginning */
+			post.likes.unshift({user: req.user.id})
+
+			post.save()
+				.then(post => res.status(200).json(post))
+				.catch(err => res.status(500).json({err: err.message}))
+		})
+		.catch(err => {
+			if (err.kind === 'ObjectId') {
+				return res.status(404).json({ notfound: 'Post not found' })
+			}
+
+			res.status(500).json({ err: err.message })
+		})
+})
 
 module.exports = router

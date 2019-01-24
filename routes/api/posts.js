@@ -113,4 +113,42 @@ router.post('/like/:id', passport.authenticate('jwt', { session: false }), (req,
 		})
 })
 
+/**
+ * @route   POST api/posts/unlike/:id
+ * @desc    Unlike post
+ * @access  Pivate
+ */
+
+router.post('/unlike/:id', passport.authenticate('jwt', { session: false }), (req, res) => {
+	Post.findById(req.params.id)
+		.then(post => {
+			/* check whether the post has already been liked */
+			const isLiked = post.likes.filter(like => like.user.toString() === req.user.id)
+			if (!isLiked.length) return res.status(400).json({ alreadyLiked: 'User has not liked this post yet' })
+
+			/* Remove user id to from array */
+			const removeIndex = post.likes.map(like => like.user.toString())
+			.indexOf(req.user.id)
+
+			if (removeIndex === -1) {
+				const error = 'User has not liked this post yet'
+				return res.status(500).json(error)
+			}
+
+			/* Splice out of array */
+			post.likes.splice(removeIndex, 1)
+
+			post.save()
+				.then(post => res.status(200).json(post))
+				.catch(err => res.status(500).json({err: err.message}))
+		})
+		.catch(err => {
+			if (err.kind === 'ObjectId') {
+				return res.status(404).json({ notfound: 'Post not found' })
+			}
+
+			res.status(500).json({ err: err.message })
+		})
+})
+
 module.exports = router

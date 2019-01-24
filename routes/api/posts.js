@@ -17,7 +17,22 @@ router.get('/', (req, res) => {
 		.catch(err => res.status(500).json(err))
 })
 
+/**
+ * @route   GET api/posts/:id
+ * @desc    Get post by id
+ * @access  Public
+ */
+router.get('/:id', (req, res) => {
+	Post.findById(req.params.id)
+		.then(post => res.status(200).json(post))
+		.catch(err => {
+			if (err.kind === 'ObjectId') {
+				return res.status(404).json('Post not found for this id')
+			}
 
+			res.status(500).json(err)
+		})
+})
 
 
 

@@ -60,7 +60,7 @@ router.post('/', passport.authenticate('jwt', { session: false }), (req, res) =>
 /**
  * @route   DELETE api/posts/:id
  * @desc    Delete post
- * @access  Pivate
+ * @access  Private
  */
 
 router.delete('/:id', passport.authenticate('jwt', { session: false }), (req, res) => {
@@ -87,7 +87,7 @@ router.delete('/:id', passport.authenticate('jwt', { session: false }), (req, re
 /**
  * @route   POST api/posts/like/:id
  * @desc    Like post
- * @access  Pivate
+ * @access  Private
  */
 
 router.post('/like/:id', passport.authenticate('jwt', { session: false }), (req, res) => {
@@ -116,7 +116,7 @@ router.post('/like/:id', passport.authenticate('jwt', { session: false }), (req,
 /**
  * @route   POST api/posts/unlike/:id
  * @desc    Unlike post
- * @access  Pivate
+ * @access  Private
  */
 
 router.post('/unlike/:id', passport.authenticate('jwt', { session: false }), (req, res) => {
@@ -127,7 +127,7 @@ router.post('/unlike/:id', passport.authenticate('jwt', { session: false }), (re
 			if (!isLiked.length)
 				return res.status(400).json({ alreadyLiked: 'User has not liked this post yet' })
 
-			/* Remove user id to from array */
+			/* Remove user id from array */
 			const removeIndex = post.likes.map(like => like.user.toString()).indexOf(req.user.id)
 
 			if (removeIndex === -1) {
@@ -161,25 +161,62 @@ router.post('/comment/:id', passport.authenticate('jwt', { session: false }), (r
 
 	if (!isValid) return res.status(400).json(errors)
 
-	Post.findById(req.params.id).then(post => {
-		const { text, name, avatar } = req.body
-		const newComment = {
-			text,
-			name,
-			avatar,
-			user: req.user.id
-		}
+	Post.findById(req.params.id)
+		.then(post => {
+			const { text, name, avatar } = req.body
+			const newComment = {
+				text,
+				name,
+				avatar,
+				user: req.user.id
+			}
 
-		/* add comment at the beginning of a comment array */
-		post.comments.unshift(newComment)
+			/* add comment at the beginning of a comment array */
+			post.comments.unshift(newComment)
 
-		post.save()
-			.then(post => res.status(200).json(post))
-			.catch(err => res.status(500).json({ err: err.message }))
-	})
-	.catch(err => res.status(500).json({err: err.message}))
+			post.save()
+				.then(post => res.status(200).json(post))
+				.catch(err => res.status(500).json({ err: err.message }))
+		})
+		.catch(err => res.status(500).json({ err: err.message }))
 })
 
+/**
+ * @route   DELETE api/posts/comment/:id/:comment_id
+ * @desc    Remove comment from post
+ * @access  Private
+ */
 
+router.delete('/comment/:id/:comment_id', passport.authenticate('jwt', { session: false }), (req, res) => {
+	Post.findById(req.params.id)
+		.then(post => {
+			/* check whether the user has commented */
+			const isCommented = post.comments.filter(comment => comment._id.toString() === req.params.comment_id)
+			if (!isCommented.length)
+				return res.status(400).json({ alreadyLiked: 'User has not commented in this post yet' })
+
+			/* Remove user id from array */
+			const removeIndex = post.comments.map(comment => comment._id.toString()).indexOf(req.params.comment_id)
+
+			if (removeIndex === -1) {
+				const error = 'User has not commented in this post yet'
+				return res.status(500).json(error)
+			}
+
+			/* Splice out of array */
+			post.comments.splice(removeIndex, 1)
+
+			post.save()
+				.then(post => res.status(200).json(post))
+				.catch(err => res.status(500).json({ err: err.message }))
+		})
+		.catch(err => {
+			if (err.kind === 'ObjectId') {
+				return res.status(404).json({ notfound: 'Post not found' })
+			}
+
+			res.status(500).json({ err: err.message })
+		})
+})
 
 module.exports = router

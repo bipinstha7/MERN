@@ -98,11 +98,11 @@ router.post('/like/:id', passport.authenticate('jwt', { session: false }), (req,
 			if (isLiked.length) return res.status(400).json({ alreadyLiked: 'User already liked this post' })
 
 			/* Add user id to likes array to the beginning */
-			post.likes.unshift({user: req.user.id})
+			post.likes.unshift({ user: req.user.id })
 
 			post.save()
 				.then(post => res.status(200).json(post))
-				.catch(err => res.status(500).json({err: err.message}))
+				.catch(err => res.status(500).json({ err: err.message }))
 		})
 		.catch(err => {
 			if (err.kind === 'ObjectId') {
@@ -124,11 +124,11 @@ router.post('/unlike/:id', passport.authenticate('jwt', { session: false }), (re
 		.then(post => {
 			/* check whether the post has already been liked */
 			const isLiked = post.likes.filter(like => like.user.toString() === req.user.id)
-			if (!isLiked.length) return res.status(400).json({ alreadyLiked: 'User has not liked this post yet' })
+			if (!isLiked.length)
+				return res.status(400).json({ alreadyLiked: 'User has not liked this post yet' })
 
 			/* Remove user id to from array */
-			const removeIndex = post.likes.map(like => like.user.toString())
-			.indexOf(req.user.id)
+			const removeIndex = post.likes.map(like => like.user.toString()).indexOf(req.user.id)
 
 			if (removeIndex === -1) {
 				const error = 'User has not liked this post yet'
@@ -140,7 +140,7 @@ router.post('/unlike/:id', passport.authenticate('jwt', { session: false }), (re
 
 			post.save()
 				.then(post => res.status(200).json(post))
-				.catch(err => res.status(500).json({err: err.message}))
+				.catch(err => res.status(500).json({ err: err.message }))
 		})
 		.catch(err => {
 			if (err.kind === 'ObjectId') {
@@ -149,6 +149,32 @@ router.post('/unlike/:id', passport.authenticate('jwt', { session: false }), (re
 
 			res.status(500).json({ err: err.message })
 		})
+})
+
+/**
+ * @route   POST api/posts/comment/:id
+ * @desc    Add comment to post
+ * @access  Private
+ */
+router.post('/comment/:id', passport.authenticate('jwt', { session: false }), (req, res) => {
+	
+
+	Post.findById(req.params.id).then(post => {
+		const { text, name, avatar } = req.body
+		const newComment = {
+			text,
+			name,
+			avatar,
+			user: req.user.id
+		}
+
+		/* add comment at the beginning of a comment array */
+		post.comments.unshift(newComment)
+
+		post.save()
+			.then(post => res.status(200).json(post))
+			.catch(err => res.status(500).json({ err: err.message }))
+	})
 })
 
 module.exports = router

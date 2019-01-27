@@ -12,8 +12,6 @@ class Navbar extends Component {
 
 		this.props.clearCurrentProfile()
 		this.props.logoutUser()
-
-		window.location.href = '/login'
 	}
 
 	render() {

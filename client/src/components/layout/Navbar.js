@@ -4,11 +4,13 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 
 import { logoutUser } from '../../actions/authActions'
+import { clearCurrentProfile } from '../../actions/profileActions'
 
 class Navbar extends Component {
 	onLogutoutClick = event => {
 		event.preventDefault()
 
+		this.props.clearCurrentProfile()
 		this.props.logoutUser()
 
 		window.location.href = '/login'
@@ -84,6 +86,7 @@ class Navbar extends Component {
 
 Navbar.propTypes = {
 	logoutUser: PropTypes.func.isRequired,
+	clearCurrentProfile: PropTypes.func,
 	auth: PropTypes.object.isRequired
 }
 
@@ -93,5 +96,5 @@ const mapStateToProps = state => ({
 
 export default connect(
 	mapStateToProps,
-	{ logoutUser }
+	{ logoutUser, clearCurrentProfile }
 )(Navbar)

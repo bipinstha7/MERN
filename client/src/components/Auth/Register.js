@@ -19,6 +19,7 @@ class Register extends Component {
 		if (nextProps.errors !== prevState.errors) {
 			return { errors: nextProps.errors }
 		}
+		return null
 	}
 
 	onChange = event => {
@@ -28,7 +29,16 @@ class Register extends Component {
 	onSubmit = event => {
 		event.preventDefault()
 
-		this.props.registerUser(this.state, this.props.history)
+		const { name, email, password, password2 } = this.state
+
+		const newUser = {
+			name,
+			email,
+			password,
+			password2
+		}
+
+		this.props.registerUser(newUser, this.props.history)
 	}
 
 	render() {

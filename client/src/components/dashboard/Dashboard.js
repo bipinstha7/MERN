@@ -3,12 +3,17 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { Link } from 'react-router-dom'
 
-import { getCurrentProfile } from '../../actions/profileActions'
+import { getCurrentProfile, deleteAccount } from '../../actions/profileActions'
 import Spinner from '../common/Spinner'
+import ProfileActions from './ProfileActions'
 
 class Dashboard extends Component {
 	componentDidMount() {
 		this.props.getCurrentProfile()
+	}
+
+	onDeleteClick = () => {
+		this.props.deleteAccount()
 	}
 
 	render() {
@@ -22,7 +27,20 @@ class Dashboard extends Component {
 		} else {
 			/* check if logged in user has profile data */
 			if (Object.keys(profile).length) {
-				dashboardContent = 'if'
+				dashboardContent = (
+					<div>
+						<p className="lead text-muted">
+							Welcome <Link to={`/profile/${profile.handle}`}>{user.name}</Link>
+						</p>
+						<ProfileActions />
+
+						<div style={{ marginBottom: '60px' }}>
+							<button onClick={this.onDeleteClick} className="btn btn-dange">
+								Delete My Account
+							</button>
+						</div>
+					</div>
+				)
 			} else {
 				dashboardContent = (
 					<div>
@@ -54,7 +72,8 @@ class Dashboard extends Component {
 Dashboard.propTypes = {
 	auth: PropTypes.object.isRequired,
 	profile: PropTypes.object.isRequired,
-	getCurrentProfile: PropTypes.func.isRequired
+	getCurrentProfile: PropTypes.func.isRequired,
+	deleteAccount: PropTypes.func.isRequired
 }
 
 const mapStateToProps = state => ({
@@ -64,5 +83,5 @@ const mapStateToProps = state => ({
 
 export default connect(
 	mapStateToProps,
-	{ getCurrentProfile }
+	{ getCurrentProfile, deleteAccount }
 )(Dashboard)

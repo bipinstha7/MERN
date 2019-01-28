@@ -21,7 +21,6 @@ export const getCurrentProfile = () => dispatch => {
 	axios
 		.get('/api/profile')
 		.then(profile => {
-			console.log('ppppppppp', profile)
 			dispatch({
 				type: GET_PROFILE,
 				payload: profile.data

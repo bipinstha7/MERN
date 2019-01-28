@@ -66,7 +66,7 @@ router.post('/login', (req, res) => {
 	const { errors, isValid } = validateLoginInput(req.body)
 
 	if (!isValid) {
-		return res.status(400).json({ err: errors })
+		return res.status(400).json(errors)
 	}
 
 	User.findOne({ email })
@@ -96,7 +96,7 @@ router.post('/login', (req, res) => {
 				}
 			})
 		})
-		.catch(err => res.status(500).json({ err }))
+		.catch(err => res.status(500).json(err))
 })
 
 module.exports = router

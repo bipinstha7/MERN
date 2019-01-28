@@ -15,6 +15,7 @@ import Footer from './components/layout/Footer'
 import Dashboard from './components/dashboard/Dashboard'
 import PrivateRoute from './components/common/PrivateRoute'
 import CreateProfile from './components/create-profile/CreateProfile'
+import EditProfile from './components/edit-profile/EditProfile'
 import './App.css'
 
 /** During browser refresh, redux store revert back to its inital state
@@ -62,6 +63,7 @@ class App extends Component {
 							<Switch>
 								<PrivateRoute exact path="/dashboard" component={Dashboard} />
 								<PrivateRoute exact path="/create-profile" component={CreateProfile} />
+								<PrivateRoute exact path="/edit-profile" component={EditProfile} />
 							</Switch>
 						</div>
 						<Footer />

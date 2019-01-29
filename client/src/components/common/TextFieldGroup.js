@@ -9,7 +9,7 @@ const TextFieldGroup = props => {
 		<div className="form-group">
 			<input
 				type={type}
-				className={classNames('form-control form-control-lg', {
+				className={classNames('form-control', {
 					'is-invalid': error
 				})}
 				placeholder={placeholder}
@@ -18,7 +18,7 @@ const TextFieldGroup = props => {
 				onChange={onChange}
 				disbaled={disabled}
 			/>
-			{info && <small className="form-text text-muted" />}
+			{info && <small className="form-text text-muted">{info}</small>}
 			{error && <div className="invalid-feedback">{error}</div>}
 		</div>
 	)

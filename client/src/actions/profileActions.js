@@ -20,16 +20,29 @@ export const getCurrentProfile = () => dispatch => {
 	dispatch(setProfileLoading())
 	axios
 		.get('/api/profile')
-		.then(profile =>
+		.then(profile => {
 			dispatch({
 				type: GET_PROFILE,
-				paylpoad: profile.data
+				payload: profile.data
 			})
-		)
+		})
 		.catch(err =>
 			dispatch({
 				type: GET_PROFILE,
 				payload: {}
+			})
+		)
+}
+
+/* Create Profile */
+export const createProfile = (profileData, history) => dispatch => {
+	axios
+		.post('/api/profile', profileData)
+		.then(result => history.push('/dashboard'))
+		.catch(err =>
+			dispatch({
+				type: GET_ERRORS,
+				payload: err.response.data || err.message
 			})
 		)
 }

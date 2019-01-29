@@ -16,7 +16,7 @@ const TextAreaFieldGroup = props => {
 				value={value}
 				onChange={onChange}
 			/>
-			{info && <small className="form-text text-muted" />}
+			{info && <small className="form-text text-muted">{info}</small>}
 			{error && <div className="invalid-feedback">{error}</div>}
 		</div>
 	)

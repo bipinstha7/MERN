@@ -16,7 +16,7 @@ const SelectListGroup = props => {
 	return (
 		<div className="form-group">
 			<select
-				className={classNames('form-control form-control-lg', {
+				className={classNames('form-control', {
 					'is-invalid': error
 				})}
 				name={name}
@@ -25,7 +25,7 @@ const SelectListGroup = props => {
 			>
 				{selectOptions}
 			</select>
-			{info && <small className="form-text text-muted" />}
+			{info && <small className="form-text text-muted">{info}</small>}
 			{error && <div className="invalid-feedback">{error}</div>}
 		</div>
 	)

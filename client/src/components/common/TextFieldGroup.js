@@ -1,6 +1,6 @@
 import React from 'react'
 import classNames from 'classnames'
-import PorpTypes from 'prop-types'
+import PropTypes from 'prop-types'
 
 const TextFieldGroup = props => {
 	const { type, name, placeholder, value, error, info, onChange, disabled } = props
@@ -25,14 +25,14 @@ const TextFieldGroup = props => {
 }
 
 TextFieldGroup.propTypes = {
-	type: PorpTypes.string.isRequired,
-	name: PorpTypes.string.isRequired,
-	placeholder: PorpTypes.string,
-	value: PorpTypes.string.isRequired,
-	error: PorpTypes.string,
-	info: PorpTypes.string,
-	onChange: PorpTypes.func.isRequired,
-	disabled: PorpTypes.string
+	type: PropTypes.string.isRequired,
+	name: PropTypes.string.isRequired,
+	placeholder: PropTypes.string,
+	value: PropTypes.string.isRequired,
+	error: PropTypes.string,
+	info: PropTypes.string,
+	onChange: PropTypes.func.isRequired,
+	disabled: PropTypes.string
 }
 
 TextFieldGroup.defaultProps = {

@@ -3,17 +3,17 @@ import classNames from 'classnames'
 import PropTypes from 'prop-types'
 
 const InputGroup = props => {
-	const { type, name, placeholder, value, error, icon, onChange } = props
+	const { name, placeholder, value, error, icon, onChange } = props
 
 	return (
 		<div className="input-group mb-3">
-			<div className="input group-prepend">
+			<div className="input-group-prepend">
 				<span className="input-group-text">
 					<i className={icon} />
 				</span>
 			</div>
-			<textarea
-				className={classNames('form-control form-control-lg', {
+			<input
+				className={classNames('form-control', {
 					'is-invalid': error
 				})}
 				placeholder={placeholder}
@@ -27,7 +27,6 @@ const InputGroup = props => {
 }
 
 InputGroup.propTypes = {
-	type: PropTypes.string.isRequired,
 	name: PropTypes.string.isRequired,
 	placeholder: PropTypes.string,
 	value: PropTypes.string.isRequired,

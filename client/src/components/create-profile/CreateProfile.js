@@ -1,11 +1,13 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import PropTypes from 'prop-types'
+import { withRouter } from 'react-router-dom'
 
 import TextFieldGroup from '../common/TextFieldGroup'
 import TextAreaFieldGroup from '../common/TextAreaFieldGroup'
 import InputGroup from '../common/InputGroup'
 import SelectListGroup from '../common/SelectListGroup'
+import { createProfile } from '../../actions/profileActions'
 
 class CreateProfile extends Component {
 	state = {
@@ -26,8 +28,49 @@ class CreateProfile extends Component {
 		errors: {}
 	}
 
+	static getDerivedStateFromProps(nextProps, prevState) {
+		if (nextProps.errors !== prevState.errors) {
+			return { errors: nextProps.errors }
+		}
+		return null
+	}
+
 	onSubmit = event => {
 		event.preventDefault()
+
+		const {
+			handle,
+			company,
+			website,
+			location,
+			status,
+			skills,
+			githubusername,
+			bio,
+			twitter,
+			facebook,
+			linkedin,
+			youtube,
+			instagram
+		} = this.state
+
+		const profileData = {
+			handle,
+			company,
+			website,
+			location,
+			status,
+			skills,
+			githubusername,
+			bio,
+			twitter,
+			facebook,
+			linkedin,
+			youtube,
+			instagram
+		}
+
+		this.props.createProfile(profileData, this.props.history)
 	}
 
 	onChange = event => {
@@ -180,7 +223,11 @@ class CreateProfile extends Component {
 									info="Tell us a little about yourself"
 								/>
 								<div className="mb-3">
-									<button onClick={() => this.toggleIcon()} className="btn btn-light">
+									<button
+										type="button"
+										onClick={() => this.toggleIcon()}
+										className="btn btn-light"
+									>
 										Add Social Network Links
 									</button>
 									<span className="text-muted">Optional</span>
@@ -206,4 +253,7 @@ const mapStateToProps = state => ({
 	errors: state.errors
 })
 
-export default connect(mapStateToProps)(CreateProfile)
+export default connect(
+	mapStateToProps,
+	{ createProfile }
+)(withRouter(CreateProfile))

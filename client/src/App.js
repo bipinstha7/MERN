@@ -17,7 +17,7 @@ import PrivateRoute from './components/common/PrivateRoute'
 import CreateProfile from './components/create-profile/CreateProfile'
 import './App.css'
 
-/** During browser refresh, redux store goes to its inital state
+/** During browser refresh, redux store revert back to its inital state
  * And the authentication is false
  * To prevent this behaviour, check localstorage for token
  * And based on the token set the authentication when page loads

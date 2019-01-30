@@ -1,9 +1,11 @@
 import React, { Component } from 'react'
 import { Link, withRouter } from 'react-router-dom'
-import TextFieldGroup from '../common/TextFieldGroup'
-import TextAreaFieldGroup from '../common/TextAreaFieldGroup'
 import { connect } from 'react-redux'
 import PropTypes from 'prop-types'
+
+import TextFieldGroup from '../common/TextFieldGroup'
+import TextAreaFieldGroup from '../common/TextAreaFieldGroup'
+import { addExperience } from '../../actions/profileActions'
 
 class AddExperience extends Component {
 	state = {
@@ -18,8 +20,29 @@ class AddExperience extends Component {
 		disabled: false
 	}
 
+	static getDerivedStateFromProps(nextProps, prevState) {
+		if (nextProps.errors !== prevState.errors) {
+			return { errors: nextProps.errors }
+		}
+		return null
+	}
+
 	onSubmit = event => {
 		event.preventDefault()
+
+		const { company, title, location, from, to, current, description } = this.state
+
+		const expData = {
+			company,
+			title,
+			location,
+			from,
+			to,
+			current,
+			description
+		}
+
+		this.props.addExperience(expData, this.props.history)
 	}
 
 	onChange = event => {
@@ -88,14 +111,14 @@ class AddExperience extends Component {
 									disabled={this.state.disabled ? 'disabled' : ''}
 								/>
 								<div className="form-check mb-4">
-									<input 
-										type="checkbox" 
-										name="current" 
+									<input
+										type="checkbox"
+										name="current"
 										className="form-check-input"
 										value={this.state.current}
 										checked={this.state.current}
 										onChange={this.onCheck}
-										id="current" 
+										id="current"
 									/>
 									<label htmlFor="current" className="form-check-label">
 										Current Job
@@ -120,6 +143,7 @@ class AddExperience extends Component {
 }
 
 AddExperience.propTypes = {
+	addExperience: PropTypes.func.isRequired,
 	profile: PropTypes.object.isRequired,
 	errors: PropTypes.object.isRequired
 }
@@ -129,4 +153,7 @@ const mapStateToProps = state => ({
 	errors: state.errors
 })
 
-export default connect(mapStateToProps)(withRouter(AddExperience))
+export default connect(
+	mapStateToProps,
+	{ addExperience }
+)(withRouter(AddExperience))

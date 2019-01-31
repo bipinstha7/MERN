@@ -20,6 +20,7 @@ import AddExperience from './components/add-credentials/AddExperience'
 import AddEducation from './components/add-credentials/AddEducation'
 import './App.css'
 import Profiles from './components/profiles/Profiles'
+import Profile from './components/profile/Profile'
 
 /** During browser refresh, redux store revert back to its inital state
  * And the authentication is false
@@ -64,6 +65,7 @@ class App extends Component {
 							<Route exact path="/register" component={Register} />
 							<Route exact path="/login" component={Login} />
 							<Route exact path="/profiles" component={Profiles} />
+							<Route exact path="/profile/:handle" component={Profile} />
 							<Switch>
 								<PrivateRoute exact path="/dashboard" component={Dashboard} />
 								<PrivateRoute exact path="/create-profile" component={CreateProfile} />

@@ -21,6 +21,7 @@ import AddEducation from './components/add-credentials/AddEducation'
 import './App.css'
 import Profiles from './components/profiles/Profiles'
 import Profile from './components/profile/Profile'
+import NotFound from './components/not-found/NotFound'
 
 /** During browser refresh, redux store revert back to its inital state
  * And the authentication is false
@@ -32,7 +33,6 @@ import Profile from './components/profile/Profile'
 if (localStorage.getItem('jwtToken')) {
 	/* set auth token header auth */
 	setAuthToken(localStorage.getItem('jwtToken'))
-
 	/* decode token and get user info & expiration */
 	const decoded = jwt_decode(localStorage.getItem('jwtToken'))
 
@@ -73,6 +73,7 @@ class App extends Component {
 								<PrivateRoute exact path="/add-experience" component={AddExperience} />
 								<PrivateRoute exact path="/add-education" component={AddEducation} />
 							</Switch>
+							<Route exact path="/not-found" component={NotFound} />
 						</div>
 						<Footer />
 					</div>

@@ -1,4 +1,5 @@
-module.exports = {
-    mongoURI: 'mongodb://mern:mern1dev@ds163164.mlab.com:63164/mern_dev',
-    secretOrKey: 'Secret JsonWebToken Key'
+if (process.env.NODE_ENV === 'production') {
+	module.exports = require('./keys_prop')
+} else {
+	module.exports = require('./keys_dev')
 }

@@ -28,7 +28,7 @@ class PostItem extends Component {
 	}
 
 	render() {
-		const { post, auth } = this.props
+		const { post, auth, showActions } = this.props
 
 		return (
 			<div className="card card-body mb-3">
@@ -42,29 +42,33 @@ class PostItem extends Component {
 					</div>
 					<div className="col-md-10">
 						<p className="lead">{post.text}</p>
-						<button
-							onClick={() => this.onLikeClick(post._id)}
-							type="button"
-							className="btn btn-light mr-1"
-						>
-							<i
-								className={classNames('fas fa-thumbs-up', {
-									'text-info': this.findUserLike(post.likes)
-								})}
-							/>
-							<span className="badge badge-light">{post.likes.length}</span>
-						</button>
-						<button
-							onClick={() => this.onUnlikeClick(post._id)}
-							type="button"
-							className="btn btn-light mr-1"
-						>
-							<i className="text-secondary fas fa-thumbs-down" />
-						</button>
-						<a href="post.html" className="btn btn-info mr-1">
-							Comments
-						</a>
-						<Link to={`/post/${post._id}`} />
+						{showActions ? (
+							<span>
+								<button
+									onClick={() => this.onLikeClick(post._id)}
+									type="button"
+									className="btn btn-light mr-1"
+								>
+									<i
+										className={classNames('fas fa-thumbs-up', {
+											'text-info': this.findUserLike(post.likes)
+										})}
+									/>
+									<span className="badge badge-light">{post.likes.length}</span>
+								</button>
+								<button
+									onClick={() => this.onUnlikeClick(post._id)}
+									type="button"
+									className="btn btn-light mr-1"
+								>
+									<i className="text-secondary fas fa-thumbs-down" />
+								</button>
+								<Link to={`/post/${post._id}`} className="btn btn-info mr-1">
+									Comments
+								</Link>
+							</span>
+						) : null}
+
 						{post.user === auth.user.id ? (
 							<button
 								className="btn btn-danger mr-1"
@@ -79,6 +83,10 @@ class PostItem extends Component {
 			</div>
 		)
 	}
+}
+
+PostItem.defaultProps = {
+	showActions: true
 }
 
 PostItem.propTypes = {
